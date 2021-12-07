@@ -24,7 +24,7 @@ mongoose.connect(DB).then(()=>
 })
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
-
+const dateobj= new Date()
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, "public/images");

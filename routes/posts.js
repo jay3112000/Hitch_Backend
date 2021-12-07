@@ -59,6 +59,21 @@ router.put("/:id/like", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+//is post liked
+
+router.put("/:id/liked", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post.likes.includes(req.body.userId)) {
+      res.json('False')
+    } else {
+      res.json('True')
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 //get a post
 
 router.get("/:id", async (req, res) => {
@@ -72,9 +87,9 @@ router.get("/:id", async (req, res) => {
 
 //get timeline posts
 
-router.get("/timeline/all", async (req, res) => {
+router.get("/timeline/all/:id", async (req, res) => {
   try {
-    const currentUser = await User.findById(req.body.userId);
+    const currentUser = await User.findById(req.params.id);
     const userPosts = await Post.find({ userId: currentUser._id });
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => {
@@ -82,6 +97,17 @@ router.get("/timeline/all", async (req, res) => {
       })
     );
     res.json(userPosts.concat(...friendPosts))
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+// get all posts of user
+
+router.get("/myposts/all/:id", async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.params.id);
+    const userPosts = await Post.find({ userId: currentUser._id });
+    res.json(userPosts)
   } catch (err) {
     res.status(500).json(err);
   }
